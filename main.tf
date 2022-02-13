@@ -25,19 +25,6 @@ resource "aws_codecommit_repository" "demo-pipeline0213-repo" {
 }
 
 ######################################################################################
-# Create an EC2 instance with a security group and keypair.
-######################################################################################
-/* resource "aws_instance" "test_server" {
-  ami = "ami-04505e74c0741db8d"
-  #   ami = data.aws_ami.ubuntu.id 
-  instance_type = "t2.micro"
-  key_name      = "Key1"
-  # security_groups = sg-00f71129
-  tags = {
-    Name = "TestServerInstance"
-  }
-} */
-######################################################################################
 # Create a role , policy and attach the policy to the role
 ######################################################################################
 resource "aws_iam_role" "demo-pipeline0213-role" {
@@ -90,27 +77,27 @@ resource "aws_iam_role_policy_attachment" "demo-pipeline0213-attach" {
 ######################################################################################
 # Create a Security group to attach to EC2
 #####################################################################################
-
+# variable my_ip {}
 resource "aws_security_group" "demo-pipeline0213-sg" {
   name = "demo-pipeline0213-sg"
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["69.215.228.134/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["69.215.228.134/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
   ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["69.215.228.134/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
   egress {
     from_port   = 0
@@ -182,14 +169,12 @@ EOF
   tags = {
     Name = "demo-pipeline0213"
   }
-
 }
 
 # resource "aws_iam_role_policy_attachment" "codedeploy-demo-pipeline0213-attach" {
 #   role       = aws_iam_role.demo-pipeline0213-role.name
 #   policy_arn = "arn:aws:iam::aws:policy/service-role/AWScodedeployRole"
 # }
-
 
 ######################################################################################
 # Create AWS code deploy app 
@@ -485,8 +470,8 @@ resource "aws_iam_role_policy_attachment" "demo0213-codepipeline_codecommit" {
 # Create AWS S3 bucket
 ######################################################################################
 resource "aws_s3_bucket" "demo0213-codepipeline_bucket" {
-  bucket = "demo0213-bucket"
-  acl    = "private"
+  bucket        = "demo0213-bucket"
+  acl           = "private"
   force_destroy = true
   lifecycle {
     prevent_destroy = false
