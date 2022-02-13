@@ -14,6 +14,17 @@ provider "aws" {
 }
 
 ######################################################################################
+# Create an code commit repo.
+######################################################################################
+resource "aws_codecommit_repository" "demo-pipeline0213-repo" {
+  repository_name = "demo-pipeline0213"
+  description     = "This is the Sample App Repository"
+  tags = {
+    Name = "demo-pipeline0213"
+  }
+}
+
+######################################################################################
 # Create an EC2 instance with a security group and keypair.
 ######################################################################################
 /* resource "aws_instance" "test_server" {
@@ -471,19 +482,31 @@ resource "aws_iam_role_policy_attachment" "demo0213-codepipeline_codecommit" {
 }
 
 ######################################################################################
-# Create AWS code pipeline
+# Create AWS S3 bucket
 ######################################################################################
 resource "aws_s3_bucket" "demo0213-codepipeline_bucket" {
   bucket = "demo0213-bucket"
+  acl    = "private"
+  force_destroy = true
+  lifecycle {
+    prevent_destroy = false
+  }
+  versioning {
+    enabled = true
+  }
   tags = {
     Name = "demo-pipeline0213"
   }
 }
-
 # resource "aws_s3_bucket_acl" "demo0213-codepipeline_bucket_acl" {
 #   bucket = aws_s3_bucket.demo0213-codepipeline_bucket.id
 #   acl    = "private"
 # }
+
+######################################################################################
+# Create AWS code pipeline
+######################################################################################
+
 
 resource "aws_codepipeline" "demo0213-codepipeline" {
   name     = "demo0213-pipeline"
